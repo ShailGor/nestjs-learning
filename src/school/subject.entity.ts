@@ -17,5 +17,11 @@ export class Subject {
 
   @ManyToMany(() => Teacher, (teacher) => teacher.subjects, { cascade: true })
   @JoinTable()
+  /*  {
+      joinColumn: {
+        name:'subjectId',
+        referencedColumnName: 'id'
+      }
+    } */
   teachers: Teacher[];
 }

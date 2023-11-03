@@ -16,6 +16,6 @@ export default registerAs(
     database: process.env.DB_NAME,
     entities: [Event, Attendee, Subject, Teacher],
     synchronize: true,
-    logging: true,
+    // logging: true,
   }),
 );
