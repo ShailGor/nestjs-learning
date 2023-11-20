@@ -10,14 +10,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { CreateEventDto } from './create-event.dto';
-import { updateEventDto } from './update-event.dto';
+import { CreateEventDto } from './input/create-event.dto';
+import { updateEventDto } from './input/update-event.dto';
 import { Event } from './event.entity';
 import { Like, MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './attendee.entity';
 import { EventsService } from './events.service';
+import { ListEvents } from './input/list.events';
 
 @Controller('/events')
 export class EventController {
@@ -32,10 +36,19 @@ export class EventController {
   ) {}
 
   @Get()
-  async findAll() {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findAll(@Query() filter: ListEvents) {
+    this.logger.debug(filter);
     this.logger.log(`Hit the findAll route`);
-    const events = await this.repository.find();
-    this.logger.debug(`Found ${events.length} events`);
+    const events =
+      await this.eventsService.getEventsWithAttendeeCountFilteredPaginated(
+        filter,
+        {
+          total: true,
+          currentPage: filter.page,
+          limit: 2,
+        },
+      );
     return events;
   }
 
